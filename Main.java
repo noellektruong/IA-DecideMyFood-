@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import java.awt.*;
 import javax.swing.*;
 
@@ -38,4 +39,10 @@ Main run = new Main();
 
 }
 
+=======
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Food Recommendation Program");
+    }
+>>>>>>> 9c7b31c5b537805d66efdcf69b63ea007b0d00ea
 }
