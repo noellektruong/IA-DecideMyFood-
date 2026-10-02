@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import java.awt.*;
 import javax.swing.*;
 
@@ -8,7 +7,7 @@ public class Main extends JFrame{
 
 public Main () {
 
-super("Decide4me");
+super("Visual Art");
 
 //setSize(Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height);
 setSize(WIDTH, HEIGHT);
@@ -39,10 +38,4 @@ Main run = new Main();
 
 }
 
-=======
-public class Main {
-    public static void main(String[] args) {
-        System.out.println("Food Recommendation Program");
-    }
->>>>>>> 9c7b31c5b537805d66efdcf69b63ea007b0d00ea
 }

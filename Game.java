@@ -5,11 +5,22 @@ import javax.swing.*;
 public class Game  extends JPanel implements Runnable, KeyListener{ 
 private BufferedImage back;  
 private int key;  
-public Game() { 
-new Thread(this).start(); 
-this.addKeyListener(this); 
-key =-1;  
-} 
+
+  private ImageIcon backImg;
+
+
+public Game() {  
+    setupImages();
+    new Thread(this).start();  
+    this.addKeyListener(this);  
+    this.setFocusable(true);
+    this.requestFocusInWindow();
+    key = -1;   
+}
+
+  public void setupImages() {
+  backImg = new ImageIcon("stardewbackground.png");
+  }
 public void run() 
    { 
     try 
@@ -28,11 +39,14 @@ public void paint(Graphics g){
 Graphics2D twoDgraph = (Graphics2D) g;  
 if( back ==null) 
 back=(BufferedImage)( (createImage(getWidth(), getHeight())));  
-Graphics g2d = back.createGraphics(); 
+Graphics g2d = back.createGraphics();
+
+g2d.clearRect(0, 0, getSize().width, getSize().height);
+
+g2d.drawImage(backImg.getImage(), 0, 0, getWidth(), getHeight(), null);
 
 
 
-g2d.clearRect(0,0,getSize().width, getSize().height); 
 
 g2d.setFont( new Font("Consolas", Font.BOLD, 50)); 
 g2d.setColor(Color.WHITE);
