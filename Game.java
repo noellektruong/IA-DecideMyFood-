@@ -17,6 +17,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
     private boolean startScreen;
     private boolean sweetScreen;
     private boolean savoryScreen;
+    private boolean saltyScreen;
 
     public Game() {
 
@@ -37,6 +38,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
         startScreen = true;
         sweetScreen = false;
         savoryScreen = false;
+        saltyScreen = false;
 
         key = -1;
     }
@@ -201,6 +203,19 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
             );
         }
 
+        if(saltyScreen == true) {
+
+            g2d.setColor(Color.WHITE);
+
+            g2d.setFont(new Font("Consolas", Font.BOLD, 40));
+
+            g2d.drawString(
+                "What kind of salty food?",
+                330,
+                150
+            );
+        }
+
         twoDgraph.drawImage(back, null, 0, 0);
     }
 
@@ -251,6 +266,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
             System.out.println("salty button clicked!");
 
             startScreen = false;
+            saltyScreen = true;
 
             repaint();
         }
