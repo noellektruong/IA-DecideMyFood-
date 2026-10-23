@@ -23,6 +23,12 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
    private boolean tendersScreen;
    private boolean sandwichScreen;
    private boolean otherChickenScreen;
+   private boolean beefScreen;
+   private boolean burgerScreen;
+   private boolean otherBeefScreen;
+   private boolean burgerPreferenceScreen;
+   private boolean healthierBurgerScreen;
+   private boolean dontCareBurgerScreen;
 
    private boolean vegetarianEndScreen;
    private boolean homeEndScreen;
@@ -58,8 +64,13 @@ private String selectedRestaurant;
         otherChickenScreen = false;
         vegetarianEndScreen = false;
         homeEndScreen = false;
-
-selectedRestaurant = "";
+        beefScreen = false;
+        burgerScreen = false;
+        otherBeefScreen = false;
+        burgerPreferenceScreen = false;
+        healthierBurgerScreen = false;
+        dontCareBurgerScreen = false;
+        selectedRestaurant = "";
         key = -1;
     }
 
@@ -154,6 +165,69 @@ selectedRestaurant = "";
             g2d.drawRoundRect(950, 650, 200, 70, 20, 20);
             g2d.drawString("Other", 1000, 695);
         }
+
+if(beefScreen == true) {
+    g2d.drawString("What kind of beef?", 400, 150);
+
+    drawButton(g2d, button1, "Burger");
+    drawButton(g2d, button2, "Other");
+}
+
+
+if(burgerScreen == true) {
+    g2d.drawString("What kind of burger?", 400, 150);
+
+    drawButton(g2d, button1, "Considered healthier");
+
+    g2d.setColor(Color.WHITE);
+    g2d.fillRoundRect(650, 550, 250, 70, 20, 20);
+
+    g2d.setColor(Color.BLACK);
+    g2d.drawRoundRect(650, 550, 250, 70, 20, 20);
+    g2d.drawString("I don't care (both)", 665, 593);
+}
+
+
+if(healthierBurgerScreen == true) {
+    g2d.drawString("Choose a restaurant", 400, 150);
+
+    drawButton(g2d, button1, "Five Guys");
+    drawButton(g2d, button2, "Burger King");
+}
+
+
+if(dontCareBurgerScreen == true) {
+    g2d.drawString("Choose a restaurant", 400, 150);
+
+    g2d.setColor(Color.WHITE);
+    g2d.fillRoundRect(100, 550, 190, 70, 20, 20);
+    g2d.fillRoundRect(330, 550, 190, 70, 20, 20);
+    g2d.fillRoundRect(560, 550, 190, 70, 20, 20);
+    g2d.fillRoundRect(790, 550, 190, 70, 20, 20);
+    g2d.fillRoundRect(1020, 550, 190, 70, 20, 20);
+
+    g2d.setColor(Color.BLACK);
+    g2d.drawRoundRect(100, 550, 190, 70, 20, 20);
+    g2d.drawRoundRect(330, 550, 190, 70, 20, 20);
+    g2d.drawRoundRect(560, 550, 190, 70, 20, 20);
+    g2d.drawRoundRect(790, 550, 190, 70, 20, 20);
+    g2d.drawRoundRect(1020, 550, 190, 70, 20, 20);
+
+    g2d.drawString("Five Guys", 120, 593);
+    g2d.drawString("Burger King", 345, 593);
+    g2d.drawString("McDonald's", 575, 593);
+    g2d.drawString("Whataburger", 800, 593);
+    g2d.drawString("Wendy's", 1040, 593);
+}
+
+
+if(otherBeefScreen == true) {
+    g2d.drawString("Choose a restaurant", 400, 150);
+
+    drawButton(g2d, button1, "Chipotle");
+    drawButton(g2d, button2, "Panda Express");
+    drawButton(g2d, button3, "Taco Bell");
+}
 
         if(friedScreen == true) {
             g2d.drawString("Where do you want fried chicken?", 200, 150);
@@ -314,14 +388,18 @@ if(otherChickenScreen == true) {
                 proteinScreen = true;
             }
         }
-        else if(proteinScreen == true) {
-            if(option.equals("Chicken")) {
-                proteinScreen = false;
-                chickenTypeScreen = true;
-            }
-        }
-        else if(chickenTypeScreen == true) {
+       else if(proteinScreen == true) {
+    if(option.equals("Chicken")) {
+        proteinScreen = false;
+        chickenTypeScreen = true;
+    }
+    else if(option.equals("Beef")) {
+        proteinScreen = false;
+        beefScreen = true;
+    }
+}
 
+else if(chickenTypeScreen == true) {
     chickenTypeScreen = false;
 
     if(option.equals("Fried")) {
@@ -344,6 +422,39 @@ if(otherChickenScreen == true) {
     }
 }
 
+else if(beefScreen == true) {
+    beefScreen = false;
+
+    if(option.equals("Burger")) {
+        burgerScreen = true;
+    }
+    else if(option.equals("Other")) {
+        otherBeefScreen = true;
+    }
+}
+
+else if(burgerScreen == true) {
+    burgerScreen = false;
+
+    if(option.equals("Considered healthier")) {
+        healthierBurgerScreen = true;
+    }
+    else if(option.equals("I don't care (both)")) {
+        dontCareBurgerScreen = true;
+    }
+}
+
+else if(healthierBurgerScreen == true ||
+        dontCareBurgerScreen == true ||
+        otherBeefScreen == true) {
+
+    selectedRestaurant = option;
+
+    healthierBurgerScreen = false;
+    dontCareBurgerScreen = false;
+    otherBeefScreen = false;
+}
+
 else if(friedScreen == true ||
         wingsScreen == true ||
         nuggetsScreen == true ||
@@ -359,6 +470,7 @@ else if(friedScreen == true ||
     tendersScreen = false;
     sandwichScreen = false;
     otherChickenScreen = false;
+    
 }
 
         repaint();
@@ -377,6 +489,11 @@ else if(friedScreen == true ||
         otherChickenScreen = false;
         vegetarianEndScreen = false;
         homeEndScreen = false;
+        beefScreen = false;
+        burgerScreen = false;
+        otherBeefScreen = false;
+        healthierBurgerScreen = false;
+        dontCareBurgerScreen = false;
 
         selectedRestaurant = "";
 
@@ -447,6 +564,63 @@ public void mouseClicked(MouseEvent e) {
             handleOption("Pizza");
         }
     }
+    else if(beefScreen == true) {
+    if(button1.contains(mouseX, mouseY)) {
+        handleOption("Burger");
+    }
+    else if(button2.contains(mouseX, mouseY)) {
+        handleOption("Other");
+    }
+}
+
+else if(burgerScreen == true) {
+    if(button1.contains(mouseX, mouseY)) {
+        handleOption("Considered healthier");
+    }
+    else if(new Rectangle(650, 550, 250, 70)
+            .contains(mouseX, mouseY)) {
+        handleOption("I don't care (both)");
+    }
+}
+
+else if(healthierBurgerScreen == true) {
+    if(button1.contains(mouseX, mouseY)) {
+        handleOption("Five Guys");
+    }
+    else if(button2.contains(mouseX, mouseY)) {
+        handleOption("Burger King");
+    }
+}
+
+else if(dontCareBurgerScreen == true) {
+    if(new Rectangle(100, 550, 190, 70).contains(mouseX, mouseY)) {
+        handleOption("Five Guys");
+    }
+    else if(new Rectangle(330, 550, 190, 70).contains(mouseX, mouseY)) {
+        handleOption("Burger King");
+    }
+    else if(new Rectangle(560, 550, 190, 70).contains(mouseX, mouseY)) {
+        handleOption("McDonald's");
+    }
+    else if(new Rectangle(790, 550, 190, 70).contains(mouseX, mouseY)) {
+        handleOption("Whataburger");
+    }
+    else if(new Rectangle(1020, 550, 190, 70).contains(mouseX, mouseY)) {
+        handleOption("Wendy's");
+    }
+}
+
+else if(otherBeefScreen == true) {
+    if(button1.contains(mouseX, mouseY)) {
+        handleOption("Chipotle");
+    }
+    else if(button2.contains(mouseX, mouseY)) {
+        handleOption("Panda Express");
+    }
+    else if(button3.contains(mouseX, mouseY)) {
+        handleOption("Taco Bell");
+    }
+}
 
     else if(chickenTypeScreen == true) {
 
@@ -471,6 +645,7 @@ public void mouseClicked(MouseEvent e) {
                 .contains(mouseX, mouseY)) {
             handleOption("Other");
         }
+        
     }
 
     else if(friedScreen == true) {
