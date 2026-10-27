@@ -1,771 +1,533 @@
+
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.*;
 
-public class Game extends JPanel implements Runnable, KeyListener, MouseListener {
-
-    private BufferedImage back;
-    private int key;
+public class Game extends JPanel implements MouseListener, KeyListener {
 
     private ImageIcon backImg;
-    private ImageIcon cowImg;
-     private Rectangle button1;
-     private Rectangle button2;
-     private Rectangle button3;
-   private boolean startScreen;
-   private boolean dollarScreen;
-   private boolean proteinScreen;
-   private boolean chickenTypeScreen;
-   private boolean friedScreen;
-   private boolean wingsScreen;
-   private boolean nuggetsScreen;
-   private boolean tendersScreen;
-   private boolean sandwichScreen;
-   private boolean otherChickenScreen;
-   private boolean beefScreen;
-   private boolean burgerScreen;
-   private boolean otherBeefScreen;
-   private boolean burgerPreferenceScreen;
-   private boolean healthierBurgerScreen;
-   private boolean dontCareBurgerScreen;
+    private ImageIcon foodButtonImg;
 
-   private boolean vegetarianEndScreen;
-   private boolean homeEndScreen;
+    private boolean startScreen = true;
+    private boolean resultsScreen = false;
 
-private String selectedRestaurant;
+    private ArrayList<Food> foods = new ArrayList<Food>();
+    private ArrayList<Food> recommendations = new ArrayList<Food>();
+    private ArrayList<UIButton> buttons = new ArrayList<UIButton>();
+    private Set<String> selectedCharacteristics = new HashSet<String>();
 
+    private int resultIndex = 0;
+
+    private String[] characteristics = {
+        "Savory", "Sweet", "Sour", "Spicy", "Salty",
+        "Crispy", "Crunchy", "Soft", "Fluffy", "Chewy",
+        "Juicy", "Cheesy", "Creamy", "Chocolatey",
+        "Fresh", "Saucy", "Cold"
+    };
+
+    private class Food {
+        String name;
+        String ingredients;
+        Set<String> characteristics;
+
+        Food(String name, String ingredients, String... characteristics) {
+            this.name = name;
+            this.ingredients = ingredients;
+            this.characteristics = new HashSet<String>(
+                Arrays.asList(characteristics)
+            );
+        }
+    }
+
+    private class UIButton {
+        Rectangle rectangle;
+        String label;
+        String action;
+
+        UIButton(int x, int y, int width, int height,
+                 String label, String action) {
+            rectangle = new Rectangle(x, y, width, height);
+            this.label = label;
+            this.action = action;
+        }
+    }
+//hello my name is joy
     public Game() {
+        setPreferredSize(new Dimension(1400, 900));
 
         setupImages();
+        setupFoods();
 
-        new Thread(this).start();
-
-        button1 = new Rectangle(400, 550, 200, 70);
-        button2 = new Rectangle(650, 550, 200, 70);
-        button3 = new Rectangle(900, 550, 200, 70);
-
-
-        this.addMouseListener(this);
-
-        this.addKeyListener(this);
-        this.setFocusable(true);
-        this.requestFocusInWindow();
-
-        startScreen = true;
-        dollarScreen = false;
-        proteinScreen = false;
-        chickenTypeScreen = false;
-        friedScreen = false;
-        wingsScreen = false;
-        nuggetsScreen = false;
-        tendersScreen = false;
-        sandwichScreen = false;
-        otherChickenScreen = false;
-        vegetarianEndScreen = false;
-        homeEndScreen = false;
-        beefScreen = false;
-        burgerScreen = false;
-        otherBeefScreen = false;
-        burgerPreferenceScreen = false;
-        healthierBurgerScreen = false;
-        dontCareBurgerScreen = false;
-        selectedRestaurant = "";
-        key = -1;
+        addMouseListener(this);
+        addKeyListener(this);
+        setFocusable(true);
     }
 
-    
-    public void setupImages() {
-    backImg = new ImageIcon("stardewbackground.png");
-    cowImg = new ImageIcon("cow.jpg");
-
+    private void setupImages() {
+        backImg = new ImageIcon("dog.jpg");
+        foodButtonImg = new ImageIcon("button.jpg");
     }
 
-    public void run() {
-        try {
-            while(true) {
-                Thread.currentThread().sleep(5);
-                repaint();
-            }
-        }
-        catch(Exception e) {
-        }
+    private void setupFoods() {
+        foods.clear();
+
+        foods.add(new Food("Burger",
+            "Beef patty, bun, lettuce, tomato, cheese",
+            "Savory", "Cheesy", "Juicy"));
+
+        foods.add(new Food("Nuggets",
+            "Chicken, breading, seasoning",
+            "Savory", "Crispy"));
+
+        foods.add(new Food("Wings",
+            "Chicken wings, seasoning, sauce",
+            "Savory", "Crispy", "Spicy", "Saucy"));
+
+        foods.add(new Food("Fried chicken",
+            "Chicken, flour, breading, seasoning",
+            "Savory", "Crispy", "Juicy"));
+
+        foods.add(new Food("Spaghetti",
+            "Pasta, tomato sauce, seasoning, optional cheese",
+            "Savory", "Saucy", "Cheesy"));
+
+        foods.add(new Food("Quesadilla",
+            "Tortilla, cheese, optional chicken",
+            "Savory", "Cheesy", "Crispy"));
+
+        foods.add(new Food("Fries",
+            "Potatoes, oil, salt",
+            "Savory", "Crispy", "Crunchy", "Salty"));
+
+        foods.add(new Food("Steak",
+            "Beef, salt, pepper, seasoning",
+            "Savory", "Juicy"));
+
+        foods.add(new Food("Pizza",
+            "Pizza dough, tomato sauce, cheese, toppings",
+            "Savory", "Cheesy", "Saucy"));
+
+        foods.add(new Food("Salad",
+            "Lettuce, vegetables, optional dressing",
+            "Fresh", "Crunchy"));
+
+        foods.add(new Food("Chinese food",
+            "Rice or noodles, vegetables, meat, sauce",
+            "Savory", "Sweet", "Spicy", "Saucy"));
+
+        foods.add(new Food("Nachos",
+            "Tortilla chips, cheese, salsa, optional meat",
+            "Savory", "Cheesy", "Crunchy", "Spicy"));
+
+        foods.add(new Food("Hot dog",
+            "Hot dog sausage, bun, optional toppings",
+            "Savory", "Juicy"));
+
+        foods.add(new Food("Waffles",
+            "Flour, eggs, milk, butter, optional syrup",
+            "Sweet", "Crispy", "Fluffy"));
+
+        foods.add(new Food("Pancakes",
+            "Flour, eggs, milk, butter, optional syrup",
+            "Sweet", "Soft", "Fluffy"));
+
+        foods.add(new Food("Cereal",
+            "Cereal grains, optional milk, optional sugar",
+            "Sweet", "Crunchy"));
+
+        foods.add(new Food("Ice cream",
+            "Milk, cream, sugar, flavoring",
+            "Sweet", "Cold", "Creamy"));
+
+        foods.add(new Food("Brownies",
+            "Chocolate, flour, sugar, butter, eggs",
+            "Sweet", "Chocolatey", "Soft", "Chewy"));
+
+        foods.add(new Food("Cookies",
+            "Flour, sugar, butter, eggs, optional chocolate chips",
+            "Sweet", "Crispy", "Chewy", "Chocolatey"));
+
+        foods.add(new Food("Cupcakes",
+            "Flour, sugar, eggs, butter, frosting",
+            "Sweet", "Soft", "Creamy"));
+
+        foods.add(new Food("Cake",
+            "Flour, sugar, eggs, butter, frosting",
+            "Sweet", "Soft", "Fluffy", "Creamy"));
+
+        foods.add(new Food("Dumplings",
+            "Dough, meat or vegetables, seasoning",
+            "Savory", "Juicy", "Soft"));
+
+        foods.add(new Food("Baos",
+            "Steamed dough, meat or vegetables, sauce",
+            "Savory", "Soft", "Fluffy"));
+
+        foods.add(new Food("Kebab",
+            "Grilled meat, seasoning, optional vegetables",
+            "Savory", "Juicy", "Spicy"));
+
+        foods.add(new Food("Fried fish",
+            "Fish, breading, flour, seasoning",
+            "Savory", "Crispy", "Juicy"));
+
+        foods.add(new Food("Mashed potatoes",
+            "Potatoes, butter, milk, salt",
+            "Savory", "Soft", "Creamy"));
+
+        foods.add(new Food("Macaroni and cheese",
+            "Macaroni, cheese, milk, butter",
+            "Savory", "Cheesy", "Creamy"));
+
+        foods.add(new Food("Chicken tenders",
+            "Chicken, breading, flour, seasoning",
+            "Savory", "Crispy", "Juicy"));
+
+        foods.add(new Food("Chicken sandwich",
+            "Chicken, bread or bun, lettuce, cheese, sauce",
+            "Savory", "Juicy", "Cheesy", "Crispy"));
     }
 
-    public void paint(Graphics g) {
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
-        Graphics2D twoDgraph = (Graphics2D) g;
+        Graphics2D g2 = (Graphics2D) g.create();
 
-        if(back == null) {
-            back = (BufferedImage)(createImage(getWidth(), getHeight()));
-        }
-
-        Graphics g2d = back.createGraphics();
-
-        g2d.clearRect(0, 0, getSize().width, getSize().height);
-
-        g2d.drawImage(
-            backImg.getImage(),
-            0, 0, getWidth(), getHeight(), null
+        g2.setRenderingHint(
+            RenderingHints.KEY_ANTIALIASING,
+            RenderingHints.VALUE_ANTIALIAS_ON
         );
 
-        g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Consolas", Font.BOLD, 35));
+        drawBackground(g2);
 
-        if(startScreen == true) {
-            g2d.drawString("Are you vegetarian?", 330, 150);
-            drawButton(g2d, button1, "Yes");
-            drawButton(g2d, button2, "No");
+        buttons.clear();
+
+        if (startScreen) {
+            drawStartScreen(g2);
+        } else if (resultsScreen) {
+            drawResultsScreen(g2);
+        } else {
+            drawSelectionScreen(g2);
         }
 
-        if(dollarScreen == true) {
-            g2d.drawString(
-                "Do you feel like you only got a dolla in your pocket?",
-                100, 150
+        g2.dispose();
+    }
+
+    private void drawBackground(Graphics2D g) {
+        if (backImg != null && backImg.getIconWidth() > 0) {
+            g.drawImage(
+                backImg.getImage(),
+                0, 0, getWidth(), getHeight(), this
             );
-            drawButton(g2d, button1, "Yes");
-            drawButton(g2d, button2, "No");
+        } else {
+            g.setColor(new Color(255, 225, 235));
+            g.fillRect(0, 0, getWidth(), getHeight());
         }
-
-        if(proteinScreen == true) {
-            g2d.drawString("Choose your protein (choose all that could apply)", 100, 150);
-            drawButton(g2d, button1, "Chicken");
-            drawButton(g2d, button2, "Beef");
-            drawButton(g2d, button3, "Seafood");
-
-            g2d.setColor(Color.WHITE);
-            g2d.fillRoundRect(650, 650, 200, 70, 20, 20);
-            g2d.setColor(Color.BLACK);
-            g2d.drawRoundRect(650, 650, 200, 70, 20, 20);
-            g2d.drawString("Pizza", 710, 695);
-        }
-
-        if(chickenTypeScreen == true) {
-            g2d.drawString("What kind of chicken?", 330, 150);
-
-            drawButton(g2d, button1, "Fried");
-            drawButton(g2d, button2, "Wings");
-            drawButton(g2d, button3, "Nuggets");
-
-            g2d.setColor(Color.WHITE);
-            g2d.fillRoundRect(400, 650, 200, 70, 20, 20);
-            g2d.setColor(Color.BLACK);
-            g2d.drawRoundRect(400, 650, 200, 70, 20, 20);
-            g2d.drawString("Tenders", 440, 695);
-
-            g2d.setColor(Color.WHITE);
-            g2d.fillRoundRect(650, 650, 250, 70, 20, 20);
-            g2d.setColor(Color.BLACK);
-            g2d.drawRoundRect(650, 650, 250, 70, 20, 20);
-            g2d.drawString("Chicken sandwich", 660, 695);
-
-            g2d.setColor(Color.WHITE);
-            g2d.fillRoundRect(950, 650, 200, 70, 20, 20);
-            g2d.setColor(Color.BLACK);
-            g2d.drawRoundRect(950, 650, 200, 70, 20, 20);
-            g2d.drawString("Other", 1000, 695);
-        }
-
-if(beefScreen == true) {
-    g2d.drawString("What kind of beef?", 400, 150);
-
-    drawButton(g2d, button1, "Burger");
-    drawButton(g2d, button2, "Other");
-}
-
-
-if(burgerScreen == true) {
-    g2d.drawString("What kind of burger?", 400, 150);
-
-    drawButton(g2d, button1, "Considered healthier");
-
-    g2d.setColor(Color.WHITE);
-    g2d.fillRoundRect(650, 550, 250, 70, 20, 20);
-
-    g2d.setColor(Color.BLACK);
-    g2d.drawRoundRect(650, 550, 250, 70, 20, 20);
-    g2d.drawString("I don't care (both)", 665, 593);
-}
-
-
-if(healthierBurgerScreen == true) {
-    g2d.drawString("Choose a restaurant", 400, 150);
-
-    drawButton(g2d, button1, "Five Guys");
-    drawButton(g2d, button2, "Burger King");
-}
-
-
-if(dontCareBurgerScreen == true) {
-    g2d.drawString("Choose a restaurant", 400, 150);
-
-    g2d.setColor(Color.WHITE);
-    g2d.fillRoundRect(100, 550, 190, 70, 20, 20);
-    g2d.fillRoundRect(330, 550, 190, 70, 20, 20);
-    g2d.fillRoundRect(560, 550, 190, 70, 20, 20);
-    g2d.fillRoundRect(790, 550, 190, 70, 20, 20);
-    g2d.fillRoundRect(1020, 550, 190, 70, 20, 20);
-
-    g2d.setColor(Color.BLACK);
-    g2d.drawRoundRect(100, 550, 190, 70, 20, 20);
-    g2d.drawRoundRect(330, 550, 190, 70, 20, 20);
-    g2d.drawRoundRect(560, 550, 190, 70, 20, 20);
-    g2d.drawRoundRect(790, 550, 190, 70, 20, 20);
-    g2d.drawRoundRect(1020, 550, 190, 70, 20, 20);
-
-    g2d.drawString("Five Guys", 120, 593);
-    g2d.drawString("Burger King", 345, 593);
-    g2d.drawString("McDonald's", 575, 593);
-    g2d.drawString("Whataburger", 800, 593);
-    g2d.drawString("Wendy's", 1040, 593);
-}
-
-
-if(otherBeefScreen == true) {
-    g2d.drawString("Choose a restaurant", 400, 150);
-
-    drawButton(g2d, button1, "Chipotle");
-    drawButton(g2d, button2, "Panda Express");
-    drawButton(g2d, button3, "Taco Bell");
-}
-
-        if(friedScreen == true) {
-            g2d.drawString("Where do you want fried chicken?", 200, 150);
-            drawButton(g2d, button1, "Popeyes");
-            drawButton(g2d, button2, "KFC");
-            drawButton(g2d, button3, "Bobo");
-        }
-
-        if(wingsScreen == true) {
-            g2d.drawString("Where do you want wings?", 300, 150);
-            drawButton(g2d, button1, "Wingstop");
-            drawButton(g2d, button2, "Whataburger");
-            drawButton(g2d, button3, "Popeyes");
-        }
-
-        if(vegetarianEndScreen == true) {
-             g2d.drawImage( cowImg.getImage(),0,0,getWidth(),getHeight(),null);
-            
-            g2d.setColor(Color.WHITE);
-            g2d.setFont(new Font("Consolas", Font.BOLD, 35));
-            g2d.drawString("I dont account for vegetarians.", 200, 150);
-            g2d.drawString("Eat grass.", 200, 210);
-
-          
-
-            drawButton(g2d, button1, "Restart");
-        }
-if(nuggetsScreen == true) {
-    g2d.drawString("Where do you want nuggets?", 300, 150);
-
-    drawButton(g2d, button1, "Chick-fil-A");
-    drawButton(g2d, button2, "McDonald's");
-    drawButton(g2d, button3, "Taco Bell");
-
-    g2d.setColor(Color.WHITE);
-    g2d.fillRoundRect(400, 650, 200, 70, 20, 20);
-    g2d.setColor(Color.BLACK);
-    g2d.drawRoundRect(400, 650, 200, 70, 20, 20);
-    g2d.drawString("Wendy's", 440, 695);
-
-    g2d.setColor(Color.WHITE);
-    g2d.fillRoundRect(650, 650, 200, 70, 20, 20);
-    g2d.setColor(Color.BLACK);
-    g2d.drawRoundRect(650, 650, 200, 70, 20, 20);
-    g2d.drawString("Popeyes", 690, 695);
-}
-
-if(tendersScreen == true) {
-    g2d.drawString("Where do you want tenders?", 300, 150);
-
-    drawButton(g2d, button1, "Chick-fil-A");
-    drawButton(g2d, button2, "Wingstop");
-    drawButton(g2d, button3, "Dave's Hot Chicken");
-
-    g2d.setColor(Color.WHITE);
-    g2d.fillRoundRect(400, 650, 200, 70, 20, 20);
-    g2d.setColor(Color.BLACK);
-    g2d.drawRoundRect(400, 650, 200, 70, 20, 20);
-    g2d.drawString("Cane's", 440, 695);
-
-    g2d.setColor(Color.WHITE);
-    g2d.fillRoundRect(650, 650, 200, 70, 20, 20);
-    g2d.setColor(Color.BLACK);
-    g2d.drawRoundRect(650, 650, 200, 70, 20, 20);
-    g2d.drawString("Popeyes", 690, 695);
-}
-
-if(sandwichScreen == true) {
-    g2d.drawString("Where do you want a chicken sandwich?", 150, 150);
-
-    drawButton(g2d, button1, "Whataburger");
-    drawButton(g2d, button2, "Chick-fil-A");
-    drawButton(g2d, button3, "Popeyes");
-
-    g2d.setColor(Color.WHITE);
-    g2d.fillRoundRect(250, 650, 250, 70, 20, 20);
-    g2d.setColor(Color.BLACK);
-    g2d.drawRoundRect(250, 650, 250, 70, 20, 20);
-    g2d.drawString("Wingstop", 280, 695);
-
-    g2d.setColor(Color.WHITE);
-    g2d.fillRoundRect(525, 650, 250, 70, 20, 20);
-    g2d.setColor(Color.BLACK);
-    g2d.drawRoundRect(525, 650, 250, 70, 20, 20);
-    g2d.drawString("Dave's Hot Chicken", 535, 695);
-
-    g2d.setColor(Color.WHITE);
-    g2d.fillRoundRect(800, 650, 200, 70, 20, 20);
-    g2d.setColor(Color.BLACK);
-    g2d.drawRoundRect(800, 650, 200, 70, 20, 20);
-    g2d.drawString("Burger King", 810, 695);
-
-    g2d.setColor(Color.WHITE);
-    g2d.fillRoundRect(1025, 650, 200, 70, 20, 20);
-    g2d.setColor(Color.BLACK);
-    g2d.drawRoundRect(1025, 650, 200, 70, 20, 20);
-    g2d.drawString("Cane's", 1060, 695);
-}
-
-if(otherChickenScreen == true) {
-    g2d.drawString("Other chicken options", 300, 150);
-
-    drawButton(g2d, button1, "Chipotle");
-    drawButton(g2d, button2, "Panda Express");
-    drawButton(g2d, button3, "Taco Bell");
-}
-        if(homeEndScreen == true) {
-            g2d.setColor(Color.WHITE);
-            g2d.setFont(new Font("Consolas", Font.BOLD, 40));
-            g2d.drawString("Eat at home.", 200, 250);
-            drawButton(g2d, button1, "Restart");
-        }
-
-        if(!selectedRestaurant.equals("")) {
-            g2d.setColor(Color.WHITE);
-            g2d.setFont(new Font("Consolas", Font.BOLD, 35));
-            g2d.drawString("You chose " + selectedRestaurant + "!", 350, 300);
-            drawButton(g2d, button1, "Restart");
-        }
-
-        twoDgraph.drawImage(back, null, 0, 0);
     }
 
-    public void drawButton(Graphics g, Rectangle button, String label) {
-        g.setColor(Color.WHITE);
-        g.fillRoundRect(
-            button.x, button.y, button.width, button.height, 20, 20
-        );
-
+    private void drawStartScreen(Graphics2D g) {
         g.setColor(Color.BLACK);
-        g.drawRoundRect(
-            button.x, button.y, button.width, button.height, 20, 20
-        );
+        g.setFont(new Font("Consolas", Font.BOLD, 48));
+        drawCentered(g, "What Should I Eat?", 250);
 
-        g.setFont(new Font("Consolas", Font.BOLD, 22));
-        g.drawString(label, button.x + 15, button.y + 43);
+       
+
+
+        addButton(g, 500, 430, 400, 80, "Start", "START");
+        addButton(g, 500, 535, 400, 65, "Exit", "EXIT");
     }
 
-    public void handleOption(String option) {
+    private void drawSelectionScreen(Graphics2D g) {
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Consolas", Font.BOLD, 38));
+        drawCentered(g, "Choose Your Characteristics", 85);
 
-        if(startScreen == true) {
+        g.setFont(new Font("Consolas", Font.PLAIN, 19));
+        drawCentered(g, "Select as many as you want, then click Find Food.", 130);
+
+        int startX = 160;
+        int startY = 190;
+        int buttonWidth = 250;
+        int buttonHeight = 65;
+        int gapX = 25;
+        int gapY = 22;
+        int columns = 4;
+
+        for (int i = 0; i < characteristics.length; i++) {
+            int row = i / columns;
+            int column = i % columns;
+
+            int x = startX + column * (buttonWidth + gapX);
+            int y = startY + row * (buttonHeight + gapY);
+
+            String characteristic = characteristics[i];
+            boolean selected =
+                selectedCharacteristics.contains(characteristic);
+
+            if (selected) {
+                g.setColor(new Color(225, 120, 160));
+                g.fillRoundRect(x, y, buttonWidth, buttonHeight, 18, 18);
+            }
+
+            g.setColor(Color.BLACK);
+            g.setStroke(new BasicStroke(selected ? 3 : 1));
+            g.drawRoundRect(x, y, buttonWidth, buttonHeight, 18, 18);
+
+            g.setFont(new Font("Consolas", Font.BOLD, 19));
+            g.setColor(Color.BLACK);
+
+            drawCenteredInButton(
+                g, characteristic, x, y, buttonWidth, buttonHeight
+            );
+
+            buttons.add(new UIButton(
+                x, y, buttonWidth, buttonHeight,
+                characteristic, "CHAR:" + characteristic
+            ));
+        }
+
+        addButton(g, 250, 700, 250, 65, "Clear Choices", "CLEAR");
+        addButton(g, 575, 700, 250, 65, "Find Food", "FIND");
+        addButton(g, 900, 700, 250, 65, "Exit", "EXIT");
+    }
+
+    private void drawResultsScreen(Graphics2D g) {
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Consolas", Font.BOLD, 38));
+        drawCentered(g, "Your Food Recommendations", 65);
+
+        if (recommendations.isEmpty()) {
+            g.setFont(new Font("Consolas", Font.PLAIN, 24));
+            drawCentered(
+                g, "No matching foods found. Try different choices!", 300
+            );
+        } else {
+            int cardX = 100;
+            int cardWidth = 1200;
+            int cardHeight = 175;
+
+            int endIndex = Math.min(
+                resultIndex + 3, recommendations.size()
+            );
+
+            for (int i = resultIndex; i < endIndex; i++) {
+                Food food = recommendations.get(i);
+                int y = 115 + (i - resultIndex) * 190;
+
+                g.setColor(new Color(255, 245, 248, 225));
+                g.fillRoundRect(cardX, y, cardWidth, cardHeight, 20, 20);
+
+                g.setColor(Color.BLACK);
+                g.setStroke(new BasicStroke(2));
+                g.drawRoundRect(cardX, y, cardWidth, cardHeight, 20, 20);
+
+                g.setColor(Color.BLACK);
+                g.setFont(new Font("Consolas", Font.BOLD, 27));
+                g.drawString(
+                    (i + 1) + ". " + food.name,
+                    cardX + 25, y + 38
+                );
+
+                g.setFont(new Font("Consolas", Font.PLAIN, 16));
+                g.drawString(
+                    "Ingredients: " + food.ingredients,
+                    cardX + 25, y + 75
+                );
+
+                ArrayList<String> sortedCharacteristics =
+                    new ArrayList<String>(food.characteristics);
+                Collections.sort(sortedCharacteristics);
+
+                g.drawString(
+                    "Characteristics: " +
+                    String.join(", ", sortedCharacteristics),
+                    cardX + 25, y + 108
+                );
+
+                if (!selectedCharacteristics.isEmpty()) {
+                    g.setFont(new Font("Consolas", Font.BOLD, 15));
+                    g.drawString(
+                        "Matching choices: " + getMatchingCount(food) +
+                        " of " + selectedCharacteristics.size(),
+                        cardX + 25, y + 140
+                    );
+                }
+            }
+
+            g.setFont(new Font("Consolas", Font.PLAIN, 18));
+            drawCentered(
+                g,
+                "Showing " + (resultIndex + 1) + "-" + endIndex +
+                " of " + recommendations.size() + " foods",
+                700
+            );
+        }
+
+        if (resultIndex + 3 < recommendations.size()) {
+            addButton(g, 270, 745, 250, 65, "More Results", "MORE");
+        }
+
+        addButton(g, 560, 745, 250, 65, "Change Choices", "CHANGE");
+        addButton(g, 850, 745, 250, 65, "Restart", "RESTART");
+        addButton(g, 1140, 745, 150, 65, "Exit", "EXIT");
+    }
+
+    private void addButton(Graphics2D g, int x, int y, int width,
+                           int height, String label, String action) {
+        if (foodButtonImg != null && foodButtonImg.getIconWidth() > 0) {
+            g.drawImage(
+                foodButtonImg.getImage(),
+                x, y, width, height, this
+            );
+        } else {
+            g.setColor(new Color(225, 120, 160));
+            g.fillRoundRect(x, y, width, height, 18, 18);
+        }
+
+        g.setFont(new Font("Consolas", Font.BOLD, 21));
+        g.setColor(Color.BLACK);
+
+        drawCenteredInButton(g, label, x, y, width, height);
+
+        buttons.add(new UIButton(x, y, width, height, label, action));
+    }
+
+    private void drawCentered(Graphics2D g, String text, int y) {
+        FontMetrics metrics = g.getFontMetrics();
+        int x = (getWidth() - metrics.stringWidth(text)) / 2;
+        g.drawString(text, x, y);
+    }
+
+    private void drawCenteredInButton(Graphics2D g, String text,
+                                      int x, int y, int width, int height) {
+        FontMetrics metrics = g.getFontMetrics();
+
+        int textX = x + (width - metrics.stringWidth(text)) / 2;
+        int textY = y + (height - metrics.getHeight()) / 2
+            + metrics.getAscent();
+
+        g.drawString(text, textX, textY);
+    }
+
+    private int getMatchingCount(Food food) {
+        int count = 0;
+
+        for (String characteristic : selectedCharacteristics) {
+            if (food.characteristics.contains(characteristic)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    private void findRecommendations() {
+        recommendations.clear();
+        resultIndex = 0;
+
+        for (Food food : foods) {
+            if (selectedCharacteristics.isEmpty()
+                    || getMatchingCount(food) > 0) {
+                recommendations.add(food);
+            }
+        }
+
+        Collections.sort(recommendations, new Comparator<Food>() {
+            @Override
+            public int compare(Food first, Food second) {
+                return Integer.compare(
+                    getMatchingCount(second),
+                    getMatchingCount(first)
+                );
+            }
+        });
+
+        resultsScreen = true;
+    }
+
+    private void handleButton(String action) {
+        if (action.equals("START")) {
             startScreen = false;
+            resultsScreen = false;
 
-            if(option.equals("Yes")) {
-                vegetarianEndScreen = true;
-            }
-            else {
-                dollarScreen = true;
+        } else if (action.equals("EXIT")) {
+            System.exit(0);
+
+        } else if (action.equals("CLEAR")) {
+            selectedCharacteristics.clear();
+
+        } else if (action.equals("FIND")) {
+            findRecommendations();
+
+        } else if (action.equals("MORE")) {
+            resultIndex += 3;
+
+        } else if (action.equals("CHANGE")) {
+            resultsScreen = false;
+
+        } else if (action.equals("RESTART")) {
+            selectedCharacteristics.clear();
+            recommendations.clear();
+            resultIndex = 0;
+            resultsScreen = false;
+            startScreen = true;
+
+        } else if (action.startsWith("CHAR:")) {
+            String characteristic = action.substring(5);
+
+            if (selectedCharacteristics.contains(characteristic)) {
+                selectedCharacteristics.remove(characteristic);
+            } else {
+                selectedCharacteristics.add(characteristic);
             }
         }
-        else if(dollarScreen == true) {
-            dollarScreen = false;
-
-            if(option.equals("Yes")) {
-                homeEndScreen = true;
-            }
-            else {
-                proteinScreen = true;
-            }
-        }
-       else if(proteinScreen == true) {
-    if(option.equals("Chicken")) {
-        proteinScreen = false;
-        chickenTypeScreen = true;
-    }
-    else if(option.equals("Beef")) {
-        proteinScreen = false;
-        beefScreen = true;
-    }
-}
-
-else if(chickenTypeScreen == true) {
-    chickenTypeScreen = false;
-
-    if(option.equals("Fried")) {
-        friedScreen = true;
-    }
-    else if(option.equals("Wings")) {
-        wingsScreen = true;
-    }
-    else if(option.equals("Nuggets")) {
-        nuggetsScreen = true;
-    }
-    else if(option.equals("Tenders")) {
-        tendersScreen = true;
-    }
-    else if(option.equals("Chicken sandwich")) {
-        sandwichScreen = true;
-    }
-    else if(option.equals("Other")) {
-        otherChickenScreen = true;
-    }
-}
-
-else if(beefScreen == true) {
-    beefScreen = false;
-
-    if(option.equals("Burger")) {
-        burgerScreen = true;
-    }
-    else if(option.equals("Other")) {
-        otherBeefScreen = true;
-    }
-}
-
-else if(burgerScreen == true) {
-    burgerScreen = false;
-
-    if(option.equals("Considered healthier")) {
-        healthierBurgerScreen = true;
-    }
-    else if(option.equals("I don't care (both)")) {
-        dontCareBurgerScreen = true;
-    }
-}
-
-else if(healthierBurgerScreen == true ||
-        dontCareBurgerScreen == true ||
-        otherBeefScreen == true) {
-
-    selectedRestaurant = option;
-
-    healthierBurgerScreen = false;
-    dontCareBurgerScreen = false;
-    otherBeefScreen = false;
-}
-
-else if(friedScreen == true ||
-        wingsScreen == true ||
-        nuggetsScreen == true ||
-        tendersScreen == true ||
-        sandwichScreen == true ||
-        otherChickenScreen == true) {
-
-    selectedRestaurant = option;
-
-    friedScreen = false;
-    wingsScreen = false;
-    nuggetsScreen = false;
-    tendersScreen = false;
-    sandwichScreen = false;
-    otherChickenScreen = false;
-    
-}
-
-        repaint();
-    }
-
-    public void restartGame() {
-        startScreen = true;
-        dollarScreen = false;
-        proteinScreen = false;
-        chickenTypeScreen = false;
-        friedScreen = false;
-        wingsScreen = false;
-        nuggetsScreen = false;
-        tendersScreen = false;
-        sandwichScreen = false;
-        otherChickenScreen = false;
-        vegetarianEndScreen = false;
-        homeEndScreen = false;
-        beefScreen = false;
-        burgerScreen = false;
-        otherBeefScreen = false;
-        healthierBurgerScreen = false;
-        dontCareBurgerScreen = false;
-
-        selectedRestaurant = "";
 
         repaint();
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
+    public void mouseClicked(MouseEvent e) {
+        Point clickPoint = e.getPoint();
+
+        for (int i = buttons.size() - 1; i >= 0; i--) {
+            UIButton button = buttons.get(i);
+
+            if (button.rectangle.contains(clickPoint)) {
+                handleButton(button.action);
+                return;
+            }
+        }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        key = e.getKeyCode();
-        System.out.println(key);
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            System.exit(0);
+        }
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
-    }
-
-   @Override
-public void mouseClicked(MouseEvent e) {
-
-    int mouseX = e.getX();
-    int mouseY = e.getY();
-
-    if(vegetarianEndScreen == true ||
-       homeEndScreen == true ||
-       !selectedRestaurant.equals("")) {
-
-        if(button1.contains(mouseX, mouseY)) {
-            restartGame();
-        }
-
-        return;
-    }
-
-    if(startScreen == true) {
-        if(button1.contains(mouseX, mouseY)) {
-            handleOption("Yes");
-        }
-        else if(button2.contains(mouseX, mouseY)) {
-            handleOption("No");
-        }
-    }
-
-    else if(dollarScreen == true) {
-        if(button1.contains(mouseX, mouseY)) {
-            handleOption("Yes");
-        }
-        else if(button2.contains(mouseX, mouseY)) {
-            handleOption("No");
-        }
-    }
-
-    else if(proteinScreen == true) {
-        if(button1.contains(mouseX, mouseY)) {
-            handleOption("Chicken");
-        }
-        else if(button2.contains(mouseX, mouseY)) {
-            handleOption("Beef");
-        }
-        else if(button3.contains(mouseX, mouseY)) {
-            handleOption("Seafood");
-        }
-        else if(new Rectangle(650, 650, 200, 70)
-                .contains(mouseX, mouseY)) {
-            handleOption("Pizza");
-        }
-    }
-    else if(beefScreen == true) {
-    if(button1.contains(mouseX, mouseY)) {
-        handleOption("Burger");
-    }
-    else if(button2.contains(mouseX, mouseY)) {
-        handleOption("Other");
-    }
-}
-
-else if(burgerScreen == true) {
-    if(button1.contains(mouseX, mouseY)) {
-        handleOption("Considered healthier");
-    }
-    else if(new Rectangle(650, 550, 250, 70)
-            .contains(mouseX, mouseY)) {
-        handleOption("I don't care (both)");
-    }
-}
-
-else if(healthierBurgerScreen == true) {
-    if(button1.contains(mouseX, mouseY)) {
-        handleOption("Five Guys");
-    }
-    else if(button2.contains(mouseX, mouseY)) {
-        handleOption("Burger King");
-    }
-}
-
-else if(dontCareBurgerScreen == true) {
-    if(new Rectangle(100, 550, 190, 70).contains(mouseX, mouseY)) {
-        handleOption("Five Guys");
-    }
-    else if(new Rectangle(330, 550, 190, 70).contains(mouseX, mouseY)) {
-        handleOption("Burger King");
-    }
-    else if(new Rectangle(560, 550, 190, 70).contains(mouseX, mouseY)) {
-        handleOption("McDonald's");
-    }
-    else if(new Rectangle(790, 550, 190, 70).contains(mouseX, mouseY)) {
-        handleOption("Whataburger");
-    }
-    else if(new Rectangle(1020, 550, 190, 70).contains(mouseX, mouseY)) {
-        handleOption("Wendy's");
-    }
-}
-
-else if(otherBeefScreen == true) {
-    if(button1.contains(mouseX, mouseY)) {
-        handleOption("Chipotle");
-    }
-    else if(button2.contains(mouseX, mouseY)) {
-        handleOption("Panda Express");
-    }
-    else if(button3.contains(mouseX, mouseY)) {
-        handleOption("Taco Bell");
-    }
-}
-
-    else if(chickenTypeScreen == true) {
-
-        if(button1.contains(mouseX, mouseY)) {
-            handleOption("Fried");
-        }
-        else if(button2.contains(mouseX, mouseY)) {
-            handleOption("Wings");
-        }
-        else if(button3.contains(mouseX, mouseY)) {
-            handleOption("Nuggets");
-        }
-        else if(new Rectangle(400, 650, 200, 70)
-                .contains(mouseX, mouseY)) {
-            handleOption("Tenders");
-        }
-        else if(new Rectangle(650, 650, 250, 70)
-                .contains(mouseX, mouseY)) {
-            handleOption("Chicken sandwich");
-        }
-        else if(new Rectangle(950, 650, 200, 70)
-                .contains(mouseX, mouseY)) {
-            handleOption("Other");
-        }
-        
-    }
-
-    else if(friedScreen == true) {
-        if(button1.contains(mouseX, mouseY)) {
-            handleOption("Popeyes");
-        }
-        else if(button2.contains(mouseX, mouseY)) {
-            handleOption("KFC");
-        }
-        else if(button3.contains(mouseX, mouseY)) {
-            handleOption("Bobo");
-        }
-    }
-
-    else if(wingsScreen == true) {
-        if(button1.contains(mouseX, mouseY)) {
-            handleOption("Wingstop");
-        }
-        else if(button2.contains(mouseX, mouseY)) {
-            handleOption("Whataburger");
-        }
-        else if(button3.contains(mouseX, mouseY)) {
-            handleOption("Popeyes");
-        }
-    }
-
-    else if(nuggetsScreen == true) {
-        if(button1.contains(mouseX, mouseY)) {
-            handleOption("Chick-fil-A");
-        }
-        else if(button2.contains(mouseX, mouseY)) {
-            handleOption("McDonald's");
-        }
-        else if(button3.contains(mouseX, mouseY)) {
-            handleOption("Taco Bell");
-        }
-        else if(new Rectangle(400, 650, 200, 70)
-                .contains(mouseX, mouseY)) {
-            handleOption("Wendy's");
-        }
-        else if(new Rectangle(650, 650, 200, 70)
-                .contains(mouseX, mouseY)) {
-            handleOption("Popeyes");
-        }
-    }
-
-    else if(tendersScreen == true) {
-        if(button1.contains(mouseX, mouseY)) {
-            handleOption("Chick-fil-A");
-        }
-        else if(button2.contains(mouseX, mouseY)) {
-            handleOption("Wingstop");
-        }
-        else if(button3.contains(mouseX, mouseY)) {
-            handleOption("Dave's Hot Chicken");
-        }
-        else if(new Rectangle(400, 650, 200, 70)
-                .contains(mouseX, mouseY)) {
-            handleOption("Cane's");
-        }
-        else if(new Rectangle(650, 650, 200, 70)
-                .contains(mouseX, mouseY)) {
-            handleOption("Popeyes");
-        }
-    }
-
-    else if(sandwichScreen == true) {
-        if(button1.contains(mouseX, mouseY)) {
-            handleOption("Whataburger");
-        }
-        else if(button2.contains(mouseX, mouseY)) {
-            handleOption("Chick-fil-A");
-        }
-        else if(button3.contains(mouseX, mouseY)) {
-            handleOption("Popeyes");
-        }
-        else if(new Rectangle(250, 650, 250, 70)
-                .contains(mouseX, mouseY)) {
-            handleOption("Wingstop");
-        }
-        else if(new Rectangle(525, 650, 250, 70)
-                .contains(mouseX, mouseY)) {
-            handleOption("Dave's Hot Chicken");
-        }
-        else if(new Rectangle(800, 650, 200, 70)
-                .contains(mouseX, mouseY)) {
-            handleOption("Burger King");
-        }
-        else if(new Rectangle(1025, 650, 200, 70)
-                .contains(mouseX, mouseY)) {
-            handleOption("Cane's");
-        }
-    }
-
-    else if(otherChickenScreen == true) {
-        if(button1.contains(mouseX, mouseY)) {
-            handleOption("Chipotle");
-        }
-        else if(button2.contains(mouseX, mouseY)) {
-            handleOption("Panda Express");
-        }
-        else if(button3.contains(mouseX, mouseY)) {
-            handleOption("Taco Bell");
-        }
-    }
-}
+    public void mousePressed(MouseEvent e) {}
 
     @Override
-    public void mousePressed(MouseEvent e) {
-    }
+    public void mouseReleased(MouseEvent e) {}
 
     @Override
-    public void mouseReleased(MouseEvent e) {
-    }
+    public void mouseEntered(MouseEvent e) {}
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-    }
+    public void mouseExited(MouseEvent e) {}
 
     @Override
-    public void mouseExited(MouseEvent e) {
-    }
+    public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void keyReleased(KeyEvent e) {}
 }
