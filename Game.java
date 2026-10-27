@@ -31,32 +31,8 @@ public class Game extends JPanel implements MouseListener, KeyListener {
         "Fresh", "Saucy", "Cold"
     };
 
-    private class Food {
-        String name;
-        String ingredients;
-        Set<String> characteristics;
+    
 
-        Food(String name, String ingredients, String... characteristics) {
-            this.name = name;
-            this.ingredients = ingredients;
-            this.characteristics = new HashSet<String>(
-                Arrays.asList(characteristics)
-            );
-        }
-    }
-
-    private class UIButton {
-        Rectangle rectangle;
-        String label;
-        String action;
-
-        UIButton(int x, int y, int width, int height,
-                 String label, String action) {
-            rectangle = new Rectangle(x, y, width, height);
-            this.label = label;
-            this.action = action;
-        }
-    }
 //hello my name is joy
     public Game() {
         setPreferredSize(new Dimension(1400, 900));
@@ -231,15 +207,10 @@ public class Game extends JPanel implements MouseListener, KeyListener {
             g.fillRect(0, 0, getWidth(), getHeight());
         }
     }
-
     private void drawStartScreen(Graphics2D g) {
         g.setColor(Color.BLACK);
         g.setFont(new Font("Consolas", Font.BOLD, 48));
         drawCentered(g, "What Should I Eat?", 250);
-
-       
-
-
         addButton(g, 500, 430, 400, 80, "Start", "START");
         addButton(g, 500, 535, 400, 65, "Exit", "EXIT");
     }

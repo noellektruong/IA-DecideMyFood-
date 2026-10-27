@@ -1,0 +1,26 @@
+[33mfc415ac[m[33m ([m[1;36mHEAD[m[33m)[m HEAD@{0}: rebase (continue): PLEASE COMMIT IT VS CODEE
+[33m246c296[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{1}: rebase (start): checkout origin/main
+[33m246c296[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m refs/remotes/origin/main@{0}: pull --tags origin main: forced-update
+[33m41c282e[m[33m ([m[1;32mmain[m[33m)[m refs/heads/main@{0}: commit: ive strayed too far away from the project AHHHHHHHHHH i fixed it this weekend
+[33m41c282e[m[33m ([m[1;32mmain[m[33m)[m HEAD@{2}: commit: ive strayed too far away from the project AHHHHHHHHHH i fixed it this weekend
+[33m13723ee[m refs/remotes/origin/main@{1}: update by push
+[33m13723ee[m refs/heads/main@{1}: commit: BEEF COMPLETE YAY
+[33m13723ee[m HEAD@{3}: commit: BEEF COMPLETE YAY
+[33m3462fea[m refs/remotes/origin/main@{2}: update by push
+[33m3462fea[m refs/heads/main@{2}: commit: please commit cow png.
+[33m3462fea[m HEAD@{4}: commit: please commit cow png.
+[33m9a4e097[m refs/heads/main@{3}: commit: PLEASE COMMIT IT VS CODEE
+[33m9a4e097[m HEAD@{5}: commit: PLEASE COMMIT IT VS CODEE
+[33m9289e3d[m refs/heads/main@{4}: reset: moving to origin/main
+[33m9289e3d[m HEAD@{6}: reset: moving to origin/main
+[33m9289e3d[m refs/remotes/origin/HEAD@{0}: fetch
+[33mffc121c[m HEAD@{7}: reset: moving to HEAD
+[33mffc121c[m HEAD@{8}: reset: moving to HEAD
+[33m9289e3d[m refs/remotes/origin/main@{3}: pull --tags origin main: fast-forward
+[33mffc121c[m refs/heads/main@{5}: commit: Chicken chicken chicken done
+[33mffc121c[m HEAD@{9}: commit: Chicken chicken chicken done
+[33m17ea701[m refs/heads/main@{6}: commit: MY CODE KEEP BREAKING AHHJHHHJHJHJHJ chicken code yay
+[33m17ea701[m HEAD@{10}: commit: MY CODE KEEP BREAKING AHHJHHHJHJHJHJ chicken code yay
+[33m9c7b31c[m refs/remotes/origin/main@{4}: update by push
+[33m9c7b31c[m refs/heads/main@{7}: commit (initial): SC3 Start food recommendation Java project
+[33m9c7b31c[m HEAD@{11}: commit (initial): SC3 Start food recommendation Java project
